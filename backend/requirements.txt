@@ -5,8 +5,10 @@ six==1.16.0
 sorl-thumbnail==12.7.0
 requests==2.26.0
 djangorestframework==3.12.4
+djoser==2.1.0
 PyJWT==2.1.0
 djangorestframework-simplejwt==4.7.2
 django-filter==21.1
 python-dotenv 
 Pillow==8.3.2
+drf-extra-fields==3.2.1

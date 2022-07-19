@@ -1,9 +1,15 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, register, TabularInline
 
-from .models import Recipe, Ingredients, Tag, Subscribe, LikeIngredients, ShoppingCart
+from .models import Recipe, Ingredients, Tag, IngredientAmount
 
 
-class RecipeAdmin(admin.ModelAdmin):
+class IngredientInline(TabularInline):
+    model = IngredientAmount
+    extra = 2
+
+
+@register(Recipe)
+class RecipeAdmin(ModelAdmin):
     """Админка для модели Рецепта."""
     
     empty_value_display = "-пусто-"
@@ -11,8 +17,6 @@ class RecipeAdmin(admin.ModelAdmin):
         "author",
         "name",
         "text",
-        "ingredients",
-        "tag",
         "cooking_time"
     )
 
@@ -21,20 +25,22 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ("tag",)
 
 
-class IngredientsAdmin(admin.ModelAdmin):
+
+@register(Ingredients)
+class IngredientsAdmin(ModelAdmin):
     """Админка для модели Ингредиента."""
     
     empty_value_display = "-пусто-"
     list_display = (
         "name",
-        "measurement",
-        "quantity"
+        "measurement_unit"
     )
 
     search_fields = ("name",)
 
 
-class TagAdmin(admin.ModelAdmin):
+@register(Tag)
+class TagAdmin(ModelAdmin):
     """Админка для модели Тега."""
     
     empty_value_display = "-пусто-"
@@ -45,11 +51,3 @@ class TagAdmin(admin.ModelAdmin):
     )
 
     filter_fields = ("name",)
-
-
-admin.register(Recipe, RecipeAdmin)
-admin.register(Ingredients, IngredientsAdmin)
-admin.register(Tag, TagAdmin)
-admin.register(Subscribe)
-admin.register(LikeIngredients)
-admin.register(ShoppingCart)
