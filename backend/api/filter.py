@@ -4,6 +4,7 @@ from rest_framework.filters import SearchFilter
 
 from foodgram.models import Recipe
 
+
 User = get_user_model()
 
 

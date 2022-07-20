@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -17,7 +16,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "foodgram",
     "api",
-    "users",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -95,9 +93,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = "users.CustomUser"
-
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
@@ -110,5 +105,16 @@ REST_FRAMEWORK = {
     ],
 }
 
-
-DEFAULT_FROM_EMAIL = 'from@foodgram-munkushi.com'
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+        'user_create': 'api.serializer.CustomUserSerializer',
+        'user': 'api.serializer.UserSerializer',
+        'current_user': 'api.serializer.UserSerializer',
+    },
+    'PERMISSIONS': {
+        'user': ('rest_framework.permissions.IsAuthenticated',),
+        'user_list': ('rest_framework.permissions.AllowAny',)
+    }
+}

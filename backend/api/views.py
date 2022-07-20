@@ -1,20 +1,28 @@
-from foodgram.models import Tag, Recipe, Ingredients, Subscribe, IngredientAmount, ShoppingCart
-from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from rest_framework import status, viewsets
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from api.pagination import CustomPagination
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializer import RecipeGetSeriazlier, RecipePostSerializer, TagSerializer, IngredientsSerializer, UserSubscribeSerializer, SubscribeSerializer
-from .permissions import AdminOrReadOnly, AuthorOrReadOnly
-from .filter import IngredientsFilter, AuthorAndTagFilter
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from django.http import HttpResponse
 from rest_framework.response import Response
 
+from api.pagination import CustomPagination
+from foodgram.models import (
+    IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe, Tag,
+)
 
+from .filter import AuthorAndTagFilter, IngredientsFilter
+from .permissions import AdminOrReadOnly, AuthorOrReadOnly
+from .serializer import (
+    IngredientsSerializer, RecipeGetSeriazlier, RecipePostSerializer,
+    SubscribeSerializer, TagSerializer,
+)
 
 User = get_user_model()
-
 
 
 class UserViewset(UserViewSet):
@@ -29,42 +37,52 @@ class UserViewset(UserViewSet):
         user = request.user
         author = get_object_or_404(User, id=id)
 
-        if user == author:
-            return Response({
-                "errors": "Вы не можете подписываться на самого себя"
-            }, status=status.HTTP_400_BAD_REQUEST)
-        if Subscribe.objects.filter(user=user, author=author).exists():
-            return Response({
-                "errors": "Вы уже подписаны на данного пользователя"
-            }, status=status.HTTP_400_BAD_REQUEST)
-
+        if (
+            user == author
+            or Subscribe.objects.filter(user=user, author=author).exists()
+        ):
+            return Response(
+                {"errors": "Вы не можете это сделать."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         follow = Subscribe.objects.create(user=user, author=author)
-        serializer = SubscribeSerializer(
-            follow, context={'request': request}
-        )
+        serializer = SubscribeSerializer(follow, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
     @subscribe.mapping.delete
     def del_subscribe(self, request, id=None):
         """Отписаться."""
         user = request.user
         author = get_object_or_404(User, id=id)
         if user == author:
-            return Response({
-                "errors": "Вы не можете отписываться от самого себя"
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"errors": "Вы не можете отписываться от самого себя"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         follow = Subscribe.objects.filter(user=user, author=author)
         if follow.exists():
             follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"errors": "Вы уже отписались"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
-        return Response({
-            "errors": "Вы уже отписались"
-        }, status=status.HTTP_400_BAD_REQUEST)
+    @action(detail=False, permission_classes=(IsAuthenticated,))
+    def subscriptions(self, request):
+        """Получение данных о подписках."""
+
+        user = request.user
+        queryset = Subscribe.objects.filter(user=user)
+        pages = self.paginate_queryset(queryset)
+        serializer = SubscribeSerializer(pages, many=True, context={"request": request})
+        return self.get_paginated_response(serializer.data)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet для модели Tag."""
+    """
+    ViewSet для модели Tag.
+    Могут создавать только админы.
+    """
 
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
@@ -72,8 +90,12 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
 
 
-
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet для модели Ingredients.
+    Могут создавать только админы.
+    """
+
     queryset = Ingredients.objects.all()
     permission_classes = (AdminOrReadOnly,)
     serializer_class = IngredientsSerializer
@@ -86,16 +108,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     serializer_class = RecipePostSerializer
-    pagination_class = CustomPagination 
+    pagination_class = CustomPagination
     filter_class = AuthorAndTagFilter
     permission_classes = (AuthorOrReadOnly,)
 
     def perform_create(self, serializer):
         """Создание рецепта."""
         serializer.save(author=self.request.user)
-    
-    @action(detail=True, methods=["get", "delete"],
-            permission_classes=[IsAuthenticated])
+
+    @action(
+        detail=True, methods=["get", "delete"], permission_classes=[IsAuthenticated]
+    )
     def favorite(self, request, pk=None):
         """Добавить/убрать обьект в избранное или из него."""
         if request.method == "GET":
@@ -104,8 +127,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return self.delete_obj(Subscribe, request.user, pk)
         return None
 
-    @action(detail=True, methods=["get", "delete"],
-            permission_classes=[IsAuthenticated])
+    @action(
+        detail=True, methods=["get", "delete"], permission_classes=[IsAuthenticated]
+    )
     def shopping_cart(self, request, pk=None):
         """Добавление/удаление рецепта в/из корзину/ы"""
         if request.method == "GET":
@@ -116,9 +140,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def add_obj(self, model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
-            return Response({
-                "errors": "Рецепт уже добавлен в список"
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"errors": "Рецепт уже добавлен в список"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         recipe = get_object_or_404(Recipe, id=pk)
         model.objects.create(user=user, recipe=recipe)
         serializer = RecipeGetSeriazlier(recipe)
@@ -129,6 +154,41 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if obj.exists():
             obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response({
-            "errors": "Рецепт уже удален"
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"errors": "Рецепт уже удален"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    @action(detail=False, methods=['get'],
+            permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        final_list = {}
+        ingredients = IngredientAmount.objects.filter(
+            recipe__cart__user=request.user).values_list(
+            'ingredient__name', 'ingredient__measurement_unit',
+            'amount')
+        for item in ingredients:
+            name = item[0]
+            if name not in final_list:
+                final_list[name] = {
+                    'measurement_unit': item[1],
+                    'amount': item[2]
+                }
+            else:
+                final_list[name]['amount'] += item[2]
+        pdfmetrics.registerFont(
+            TTFont('Slimamif', 'Slimamif.ttf', 'UTF-8'))
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = ('attachment; '
+                                           'filename="shopping_list.pdf"')
+        page = canvas.Canvas(response)
+        page.setFont('Slimamif', size=24)
+        page.drawString(200, 800, 'Список ингредиентов')
+        page.setFont('Slimamif', size=16)
+        height = 750
+        for i, (name, data) in enumerate(final_list.items(), 1):
+            page.drawString(75, height, (f'<{i}> {name} - {data["amount"]}, '
+                                         f'{data["measurement_unit"]}'))
+            height -= 25
+        page.showPage()
+        page.save()
+        return response
