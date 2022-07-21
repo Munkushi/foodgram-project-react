@@ -6,25 +6,25 @@ User = get_user_model()
 
 
 # colors for Tag
-red = "#ff0006"
-light_blue = "#879eee"
-blue = "#220e75"
-pink = "#e784f4"
-light_green = "#8fd8b9"
-light_orange = "#faad62"
-yellow = "#deec59"
-purple = "#7e4bf3"
+RED = "#ff0006"
+LIGHT_BLUE = "#879eee"
+BLUE = "#220e75"
+PINK = "#e784f4"
+LIGHT_GREEN = "#8fd8b9"
+LIGHT_ORANGE = "#faad62"
+YELLOW = "#deec59"
+PURPLE = "#7e4bf3"
 
 
 COLORS = [
-    (red, "Красный"),
-    (light_blue, "Голубой"),
-    (blue, "Синий"),
-    (pink, "Розовый"),
-    (light_green, "Светло зелёный"),
-    (light_orange, "Светло оранжевый"),
-    (yellow, "Жёлтый"),
-    (purple, "Фиолетовый"),
+    (RED, "Красный"),
+    (LIGHT_BLUE, "Голубой"),
+    (BLUE, "Синий"),
+    (PINK, "Розовый"),
+    (LIGHT_GREEN, "Светло зелёный"),
+    (LIGHT_ORANGE, "Светло оранжевый"),
+    (YELLOW, "Жёлтый"),
+    (PURPLE, "Фиолетовый"),
 ]
 
 
@@ -36,29 +36,43 @@ class Tag(models.Model):
     slug = models.SlugField(
         verbose_name="Представление тега", unique=True, max_length=200)
     color = models.CharField(
-        max_length=7, choices=COLORS, default="#ffffff", unique=True
+        verbose_name="Цвет",
+        max_length=7, 
+        choices=COLORS, 
+        default="#ffffff", 
+        unique=True
     )
 
-    def __str__(self):
-        return self.name
 
     class Meta:
         ordering = ("-id",)
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
+    
+
+    def __str__(self):
+        return self.name
 
 
 class Ingredients(models.Model):
     """Ингредиенты."""
 
-    name = models.TextField(verbose_name="Название", max_length=200, blank=True)
-    measurement_unit = models.TextField(verbose_name="Единица измерения", blank=True)
-
-    def __str__(self) -> str:
-        return self.name
+    name = models.TextField(
+        verbose_name="Название", 
+        max_length=200, 
+        unique=True
+        )
+    measurement_unit = models.TextField(
+        verbose_name="Единица измерения", 
+        unique=True
+        )
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ("-id",)
+    
+    
+    def __str__(self) -> str:
+        return self.name
 
 
 class Recipe(models.Model):
@@ -71,18 +85,24 @@ class Recipe(models.Model):
         verbose_name="Автор рецепта",
     )
     name = models.TextField(
-        max_length=200, blank=True, verbose_name="Название")
+        max_length=200, 
+        verbose_name="Название")
     image = models.ImageField(
-        upload_to="backend/", blank=True, verbose_name="Картинка")
+        upload_to="backend/", 
+        verbose_name="Картинка")
     text = models.CharField(
-        verbose_name="Текствое описание", blank=True, max_length=300)
+        verbose_name="Текствое описание", 
+        max_length=300)
     ingredients = models.ManyToManyField(
-        Ingredients, related_name="recipes", verbose_name="Ингредиент", blank=True
+        Ingredients, 
+        related_name="recipes", 
+        verbose_name="Ингредиент", 
     )
-    tag = models.ManyToManyField(Tag, blank=True, verbose_name="Тег")
+    tag = models.ManyToManyField(
+        Tag, 
+        verbose_name="Тег")
     cooking_time = models.PositiveIntegerField(
         verbose_name="Время приготовления (м.)",
-        blank=True,
         validators=(
             validators.MinValueValidator(1, message="Минимальное время - 1 минута!"),
         ),
@@ -143,8 +163,6 @@ class Subscribe(models.Model):
         verbose_name="Автор",
     )
 
-    def __str__(self) -> str:
-        return f"{self.user} подписался на {self.author}."
 
     class Meta:
         constraints = [
@@ -154,6 +172,9 @@ class Subscribe(models.Model):
 
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
+
+    def __str__(self) -> str:
+        return f"{self.user}: {self.author}."
 
 
 class ShoppingCart(models.Model):

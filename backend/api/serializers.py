@@ -11,7 +11,6 @@ from foodgram.models import (
 User = get_user_model()
 
 
-# user create
 class CustomUserSerializer(UserCreateSerializer):
     """Сериализатор для создания User."""
 
@@ -38,7 +37,6 @@ class CustomUserSerializer(UserCreateSerializer):
         }
 
 
-# GET
 class RecipeGetSeriazlier(serializers.ModelSerializer):
     """Serializer для модели Recipe. GET"""
 
@@ -50,11 +48,10 @@ class RecipeGetSeriazlier(serializers.ModelSerializer):
         read_only_fields = ("__all__",)
 
 
-# classic user 
 class UserSerializer(UserSerializer):
     """Сериализатор для вывода авторов на которых подписан текущий пользователь."""
 
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField(method_name="get_is_subscribed")
 
     class Meta:
         model = User
@@ -76,7 +73,6 @@ class UserSerializer(UserSerializer):
         return Subscribe.objects.filter(user=user, author=obj.id).exists()
 
 
-# ONLY GET
 class TagSerializer(serializers.ModelSerializer):
     """Serializer для модели Tag."""
 
@@ -85,7 +81,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# GET. ПОЛУЧЕНИЕ ИНГРЕДИЕНТОВ
+
 class IngredientsSerializer(serializers.ModelSerializer):
     """Serializer для модели Igredients."""
 
@@ -94,7 +90,7 @@ class IngredientsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# ingredient plus recipe
+
 class IngredientAmountSerializer(serializers.ModelSerializer):
     """Serializer для модели IgredientAmount. Связь ингредиента и рецепта."""
 
@@ -107,7 +103,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "measurement_unit", "amount")
 
 
-# POST
+
 class RecipePostSerializer(serializers.ModelSerializer):
     """Serializer для модели Recipe. POST"""
 
@@ -169,7 +165,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, validated_data, instance):
-        """Обновление рецепта."""
+        """Обновление данных о рецепте."""
         instance.image = validated_data.get("image", instance.image)
         instance.name = validated_data.get("name", instance.name)
         instance.text = validated_data.get("text", instance.text)
@@ -182,7 +178,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         IngredientAmount.objects.filter(recipe=instance).all().delete()
         self.create_ingredients(validated_data.get("ingredients"), instance)
         instance.save()
-        return instance
+        return super().update(instance, validated_data)
 
     def validate(self, data):
         """Валидация рецепта."""
@@ -210,6 +206,13 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 )
         data["ingredients"] = ingredients
         return data
+    
+    def validate_cooking_time(self, cooking_time):
+        """Валидация времени приготовления."""
+        if int(cooking_time) <= 1:
+            raise serializers.ValidationError(
+                "Минимальное время приготовления - 1 минута.")
+        return cooking_time
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
