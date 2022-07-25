@@ -2,11 +2,9 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from foodgram.models import (IngredientAmount, Ingredients, Recipe, Subscribe,
+                             Tag)
 from rest_framework import serializers
-
-from foodgram.models import (
-    IngredientAmount, Ingredients, Recipe, Subscribe, Tag,
-)
 
 User = get_user_model()
 
@@ -49,9 +47,10 @@ class RecipeGetSeriazlier(serializers.ModelSerializer):
 
 
 class UserSerializer(UserSerializer):
-    """Сериализатор для вывода авторов на которых подписан текущий пользователь."""
+    """Подписки пользователя."""
 
-    is_subscribed = serializers.SerializerMethodField(method_name="get_is_subscribed")
+    is_subscribed = serializers.SerializerMethodField(
+        method_name="get_is_subscribed")
 
     class Meta:
         model = User
@@ -92,15 +91,21 @@ class IngredientsSerializer(serializers.ModelSerializer):
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
-    """Serializer для модели IgredientAmount. Связь ингредиента и рецепта."""
+    """Serializer для модели IgredientAmount."""
 
     id = serializers.ReadOnlyField(source="ingredient.id")
     name = serializers.ReadOnlyField(source="ingredient.name")
-    measurement_unit = serializers.ReadOnlyField(source="ingredient.measurement_unit")
+    measurement_unit = serializers.ReadOnlyField(
+        source="ingredient.measurement_unit")
 
     class Meta:
         model = IngredientAmount
-        fields = ("id", "name", "measurement_unit", "amount")
+        fields = (
+            "id", 
+            "name", 
+            "measurement_unit", 
+            "amount"
+            )
 
 
 
@@ -186,11 +191,14 @@ class RecipePostSerializer(serializers.ModelSerializer):
         ingredients = self.initial_data.get("ingredients")
         if not ingredients:
             raise serializers.ValidationError(
-                {"ingredients': 'Нужен хоть один ингридиент для рецепта"}
+                {
+                    "ingredients": "Минимум один ингридиент"
+                    }
             )
         ingredient_list = []
         for ingredient_item in ingredients:
-            ingredient = get_object_or_404(Ingredients, id=ingredient_item["id"])
+            ingredient = get_object_or_404(
+                Ingredients, id=ingredient_item["id"])
             if ingredient in ingredient_list:
                 raise serializers.ValidationError(
                     "Ингридиенты должны " "быть уникальными"
@@ -200,7 +208,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {
                         "ingredients": (
-                            "Убедитесь, что значение количества " "ингредиента больше 0"
+                            "Убедитесь, что значение количества ингр. > 0."
                         )
                     }
                 )

@@ -37,19 +37,15 @@ class Tag(models.Model):
         verbose_name="Представление тега", unique=True, max_length=200)
     color = models.CharField(
         verbose_name="Цвет",
-        max_length=7, 
-        choices=COLORS, 
-        default="#ffffff", 
+        max_length=7,
+        choices=COLORS,
+        default="#ffffff",
         unique=True
     )
-
-
     class Meta:
         ordering = ("-id",)
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
-    
-
     def __str__(self):
         return self.name
 
@@ -58,19 +54,16 @@ class Ingredients(models.Model):
     """Ингредиенты."""
 
     name = models.TextField(
-        verbose_name="Название", 
-        max_length=200, 
+        verbose_name="Название",
+        max_length=200,
         unique=True
         )
     measurement_unit = models.TextField(
-        verbose_name="Единица измерения", 
+        verbose_name="Единица измерения",
         unique=True
         )
-
     class Meta:
         ordering = ("-id",)
-    
-    
     def __str__(self) -> str:
         return self.name
 
@@ -85,21 +78,21 @@ class Recipe(models.Model):
         verbose_name="Автор рецепта",
     )
     name = models.TextField(
-        max_length=200, 
+        max_length=200,
         verbose_name="Название")
     image = models.ImageField(
-        upload_to="backend/", 
+        upload_to="backend/",
         verbose_name="Картинка")
     text = models.CharField(
-        verbose_name="Текствое описание", 
+        verbose_name="Текствое описание",
         max_length=300)
     ingredients = models.ManyToManyField(
-        Ingredients, 
-        related_name="recipes", 
-        verbose_name="Ингредиент", 
+        Ingredients,
+        related_name="recipes",
+        verbose_name="Ингредиент",
     )
     tag = models.ManyToManyField(
-        Tag, 
+        Tag,
         verbose_name="Тег")
     cooking_time = models.PositiveIntegerField(
         verbose_name="Время приготовления (м.)",
@@ -107,12 +100,10 @@ class Recipe(models.Model):
             validators.MinValueValidator(1, message="Минимальное время - 1 минута!"),
         ),
     )
-
     class Meta:
         ordering = ("-id",)
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
-
     def __str__(self):
         return self.description[:20]
 
@@ -136,12 +127,12 @@ class IngredientAmount(models.Model):
         verbose_name="Количество ингредиентов")
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ("-id",)
         verbose_name = "Количество ингридиента"
         verbose_name_plural = "Количество ингридиентов"
         constraints = [
             models.UniqueConstraint(
-                fields=["ingredient", "recipe"], 
+                fields=["ingredient", "recipe"],
                 name="unique ingredients recipe"
             )
         ]
@@ -162,12 +153,11 @@ class Subscribe(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Автор",
     )
-
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "author"], name="unique_following")
+                fields=["user", "author"], 
+                name="unique_following")
         ]
 
         verbose_name = "Подписка"
@@ -192,13 +182,13 @@ class ShoppingCart(models.Model):
         related_name="cart",
         verbose_name="Рецепт",
     )
-
     class Meta:
         ordering = ("-id",)
         verbose_name = "Корзина"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique cart user")
+                fields=["user", "recipe"], 
+                name="unique cart user")
         ]
 
 

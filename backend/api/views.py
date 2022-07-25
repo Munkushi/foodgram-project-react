@@ -1,22 +1,20 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from foodgram.models import (IngredientAmount, Ingredients, Recipe,
+                             ShoppingCart, Subscribe, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from api.pagination import CustomPagination
-from foodgram.models import (
-    IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe, Tag,
-)
 
 from .filter import AuthorAndTagFilter, IngredientsFilter
 from .permissions import AdminOrReadOnly, AuthorOrReadOnly
-from .serializers import (
-    IngredientsSerializer, RecipeGetSeriazlier, RecipePostSerializer,
-    SubscribeSerializer, TagSerializer,
-)
+from .serializers import (IngredientsSerializer, RecipeGetSeriazlier,
+                          RecipePostSerializer, SubscribeSerializer,
+                          TagSerializer)
 from .utils import download_shooping_card
 
 User = get_user_model()
