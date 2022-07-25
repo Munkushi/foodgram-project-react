@@ -65,7 +65,7 @@ class Ingredients(models.Model):
 
     class Meta:
         ordering = ("-id",)
-    
+
     def __str__(self) -> str:
         return self.name
 
@@ -108,7 +108,7 @@ class Recipe(models.Model):
         ordering = ("-id",)
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
-    
+
     def __str__(self):
         return self.description[:20]
 

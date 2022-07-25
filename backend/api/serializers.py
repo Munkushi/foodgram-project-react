@@ -78,12 +78,14 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = "__all__"
+
 class IngredientsSerializer(serializers.ModelSerializer):
     """Serializer для модели Igredients."""
 
     class Meta:
         model = Ingredients
         fields = "__all__"
+
 class IngredientAmountSerializer(serializers.ModelSerializer):
     """Serializer для модели IgredientAmount."""
 
@@ -94,14 +96,10 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientAmount
-        fields = (
-            "id",
-            "name",
-            "measurement_unit",
-            "amount"
-            )
-
-
+        fields = ("id",
+                  "name",
+                  "measurement_unit",
+                  "amount")
 
 class RecipePostSerializer(serializers.ModelSerializer):
     """Serializer для модели Recipe. POST"""
@@ -137,12 +135,14 @@ class RecipePostSerializer(serializers.ModelSerializer):
         """Получение информации о нахождении рецепта."""
 
         user = self.context.get("request").user
-        return user.is_authenticated and user.cart.filter(id=obj.id).exists()
+        return user.is_authenticated and user.cart.filter(
+            id=obj.id).exists()
 
     def get_is_favorite(self, obj):
         """Получение списка изранного."""
         user = self.context.get("request").user
-        return user.is_authenticated and user.favorites.filter(id=obj.id).exists()
+        return user.is_authenticated and user.favorites.filter(
+            id=obj.id).exists()
 
     def create_ingredient(self, ingredients, recipe):
         """Получение ингредиентов для рецепта."""
@@ -182,7 +182,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Валидация рецепта."""
-
         ingredients = self.initial_data.get("ingredients")
         if not ingredients:
             raise serializers.ValidationError(
@@ -217,11 +216,8 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 "Минимальное время приготовления - 1 минута.")
         return cooking_time
 
-
 class SubscribeSerializer(serializers.ModelSerializer):
     """Serializer для подписки."""
-
-
     id = serializers.ReadOnlyField(source="author.id")
     email = serializers.ReadOnlyField(source="author.email")
     username = serializers.ReadOnlyField(source="author.username")

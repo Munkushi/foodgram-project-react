@@ -1,3 +1,4 @@
+from api.pagination import CustomPagination
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
@@ -7,8 +8,6 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-
-from api.pagination import CustomPagination
 
 from .filter import AuthorAndTagFilter, IngredientsFilter
 from .permissions import AdminOrReadOnly, AuthorOrReadOnly
@@ -59,7 +58,7 @@ class UserViewset(UserViewSet):
             follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
-            {"errors": "Вы уже отписались"}, 
+            {"errors": "Вы уже отписались"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -71,8 +70,8 @@ class UserViewset(UserViewSet):
         queryset = Subscribe.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
-            pages, 
-            many=True, 
+            pages,
+            many=True,
             context={"request": request})
         return self.get_paginated_response(serializer.data)
 
@@ -116,7 +115,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     @action(
-        detail=True, methods=("get", "delete",), permission_classes=(IsAuthenticated,)
+        detail=True, 
+        methods=("get", "delete",), 
+        permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk=None):
         """Добавить/убрать обьект в избранное или из него."""
@@ -127,7 +128,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return None
 
     @action(
-        detail=True, methods=("get", "delete",), permission_classes=(IsAuthenticated,)
+        detail=True, 
+        methods=("get", "delete",), 
+        permission_classes=(IsAuthenticated,)
     )
     def shopping_cart(self, request, pk=None):
         """Добавление/удаление рецепта в/из корзину/ы"""
@@ -136,7 +139,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         elif request.method == "DELETE":
             return self.delete_obj(ShoppingCart, request.user, pk)
         return None
-
     def add_obj(self, model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
             return Response(
@@ -147,7 +149,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         model.objects.create(user=user, recipe=recipe)
         serializer = RecipeGetSeriazlier(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
     def delete_obj(self, model, user, pk):
         obj = model.objects.filter(user=user, recipe__id=pk)
         if obj.exists():
@@ -156,7 +157,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(
             {"errors": "Рецепт уже удален"}, status=status.HTTP_400_BAD_REQUEST
         )
-    
     @action(detail=False, methods=("get",),
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
@@ -176,4 +176,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 final_list[name]["amount"] += item[2]
             
         download_shooping_card(final_list)
-        

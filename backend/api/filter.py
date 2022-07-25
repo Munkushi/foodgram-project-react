@@ -8,7 +8,6 @@ User = get_user_model()
 
 class IngredientsFilter(SearchFilter):
     "Фильтр для серелизатора Ingredients."
-    
     search_param = "name"
 
 
