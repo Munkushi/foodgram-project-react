@@ -79,12 +79,14 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = "__all__"
 
+
 class IngredientsSerializer(serializers.ModelSerializer):
     """Serializer для модели Igredients."""
 
     class Meta:
         model = Ingredients
         fields = "__all__"
+
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
     """Serializer для модели IgredientAmount."""
@@ -100,6 +102,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
                   "name",
                   "measurement_unit",
                   "amount")
+
 
 class RecipePostSerializer(serializers.ModelSerializer):
     """Serializer для модели Recipe. POST"""
@@ -187,7 +190,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {
                     "ingredients": "Минимум один ингридиент"
-                    }
+                }
             )
         ingredient_list = []
         for ingredient_item in ingredients:
@@ -208,7 +211,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 )
         data["ingredients"] = ingredients
         return data
-    
+
     def validate_cooking_time(self, cooking_time):
         """Валидация времени приготовления."""
         if int(cooking_time) <= 1:

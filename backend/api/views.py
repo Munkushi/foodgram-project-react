@@ -115,8 +115,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     @action(
-        detail=True, 
-        methods=("get", "delete",), 
+        detail=True,
+        methods=("get", "delete",),
         permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk=None):
@@ -128,8 +128,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return None
 
     @action(
-        detail=True, 
-        methods=("get", "delete",), 
+        detail=True,
+        methods=("get", "delete",),
         permission_classes=(IsAuthenticated,)
     )
     def shopping_cart(self, request, pk=None):
@@ -139,6 +139,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         elif request.method == "DELETE":
             return self.delete_obj(ShoppingCart, request.user, pk)
         return None
+
     def add_obj(self, model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
             return Response(
@@ -149,6 +150,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         model.objects.create(user=user, recipe=recipe)
         serializer = RecipeGetSeriazlier(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     def delete_obj(self, model, user, pk):
         obj = model.objects.filter(user=user, recipe__id=pk)
         if obj.exists():
@@ -157,6 +159,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(
             {"errors": "Рецепт уже удален"}, status=status.HTTP_400_BAD_REQUEST
         )
+    
     @action(detail=False, methods=("get",),
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
@@ -174,5 +177,5 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 }
             else:
                 final_list[name]["amount"] += item[2]
-            
+
         download_shooping_card(final_list)
