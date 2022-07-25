@@ -15,3 +15,4 @@ drf-extra-fields==3.2.1
 isort
 black
 reportlab==3.6.8
+python-dotenv

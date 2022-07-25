@@ -61,7 +61,8 @@ class UserViewset(UserViewSet):
             follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
-            {"errors": "Вы уже отписались"}, status=status.HTTP_400_BAD_REQUEST
+            {"errors": "Вы уже отписались"}, 
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     @action(detail=False, permission_classes=(IsAuthenticated,))
@@ -71,7 +72,10 @@ class UserViewset(UserViewSet):
         user = request.user
         queryset = Subscribe.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)
-        serializer = SubscribeSerializer(pages, many=True, context={"request": request})
+        serializer = SubscribeSerializer(
+            pages, 
+            many=True, 
+            context={"request": request})
         return self.get_paginated_response(serializer.data)
 
 

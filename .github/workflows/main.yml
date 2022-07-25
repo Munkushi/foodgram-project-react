@@ -1,4 +1,4 @@
-name: yamdb_workflow
+name: foodgram_workflow
 
 on: [push]
 
@@ -44,7 +44,8 @@ jobs:
           with:
             file: api_yamdb/Dockerfile
             push: true
-            tags: munkushi/yamdb_final 
+            tags: munkushi/foodgram
+            # не факт что то указываю
   
   deploy:
     name: Deploing the project

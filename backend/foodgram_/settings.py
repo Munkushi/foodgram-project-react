@@ -1,10 +1,15 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-SECRET_KEY = 'a@(tsb$&1oyxaok&+nq!#55g0zk63*!cb1ix+rrt6%orgyaqi^'
+SECRET_KEY = os.getenv(
+    "TOKEN", 
+    default="a@(tsb$&1oyxaok&+nq!#55g0zk63*!cb1ix+rrt6%orgyaqi^")
 
 DEBUG = True
 
@@ -56,12 +61,28 @@ WSGI_APPLICATION = 'foodgram_.wsgi.application'
 
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
+
+# sql -> postgres
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    "default": {
+        "ENGINE": os.getenv(
+            "DB_ENGINE", default="django.db.backends.postgresql"
+        ),
+        'NAME': os.getenv("DB_NAME", default="postgres"),
+        'USER': os.getenv("POSTGRES_USER", default="postgres"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD", default="971517"),
+        'HOST': os.getenv("DB_HOST", default="db"),
+        'PORT': os.getenv("DB_PORT", default="5432"),
     }
 }
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -81,7 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
