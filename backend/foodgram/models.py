@@ -42,10 +42,12 @@ class Tag(models.Model):
         default="#ffffff",
         unique=True
     )
+
     class Meta:
         ordering = ("-id",)
         verbose_name = "Тег"
         verbose_name_plural = "Теги"
+
     def __str__(self):
         return self.name
 
@@ -56,14 +58,14 @@ class Ingredients(models.Model):
     name = models.TextField(
         verbose_name="Название",
         max_length=200,
-        unique=True
-        )
+        unique=True)
     measurement_unit = models.TextField(
         verbose_name="Единица измерения",
-        unique=True
-        )
+        unique=True)
+
     class Meta:
         ordering = ("-id",)
+    
     def __str__(self) -> str:
         return self.name
 
@@ -97,13 +99,16 @@ class Recipe(models.Model):
     cooking_time = models.PositiveIntegerField(
         verbose_name="Время приготовления (м.)",
         validators=(
-            validators.MinValueValidator(1, message="Минимальное время - 1 минута!"),
+            validators.MinValueValidator(
+                1, message="Минимальное время - 1 минута!"),
         ),
     )
+
     class Meta:
         ordering = ("-id",)
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
+    
     def __str__(self):
         return self.description[:20]
 
@@ -153,10 +158,11 @@ class Subscribe(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Автор",
     )
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "author"], 
+                fields=["user", "author"],
                 name="unique_following")
         ]
 
@@ -182,12 +188,13 @@ class ShoppingCart(models.Model):
         related_name="cart",
         verbose_name="Рецепт",
     )
+
     class Meta:
         ordering = ("-id",)
         verbose_name = "Корзина"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "recipe"], 
+                fields=["user", "recipe"],
                 name="unique cart user")
         ]
 

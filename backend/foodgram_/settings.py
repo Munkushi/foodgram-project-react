@@ -1,14 +1,12 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
-
-
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv(
-    "TOKEN", 
+    "TOKEN",
     default="a@(tsb$&1oyxaok&+nq!#55g0zk63*!cb1ix+rrt6%orgyaqi^")
 
 DEBUG = True
@@ -58,9 +56,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'foodgram_.wsgi.application'
-
-
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -82,9 +77,6 @@ DATABASES = {
         'PORT': os.getenv("DB_PORT", default="5432"),
     }
 }
-
-
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -99,9 +91,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
-
 LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'

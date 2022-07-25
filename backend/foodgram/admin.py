@@ -38,4 +38,3 @@ class TagAdmin(ModelAdmin):
     list_display = ("name", "slug", "color")
 
     filter_fields = ("name",)
-

@@ -78,18 +78,12 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = "__all__"
-
-
-
 class IngredientsSerializer(serializers.ModelSerializer):
     """Serializer для модели Igredients."""
 
     class Meta:
         model = Ingredients
         fields = "__all__"
-
-
-
 class IngredientAmountSerializer(serializers.ModelSerializer):
     """Serializer для модели IgredientAmount."""
 
@@ -101,9 +95,9 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientAmount
         fields = (
-            "id", 
-            "name", 
-            "measurement_unit", 
+            "id",
+            "name",
+            "measurement_unit",
             "amount"
             )
 
@@ -114,7 +108,8 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
-    ingredients = IngredientAmountSerializer(many=True, read_only=True)
+    ingredients = IngredientAmountSerializer(
+        many=True, read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
