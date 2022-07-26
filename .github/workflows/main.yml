@@ -47,7 +47,7 @@ jobs:
             push: true
             tags: munkushi/foodgram-project
  
-  build_and_push_to_docker_hub:
+  build_and_push_to_docker_hub_1:
       name: Push Docker image to Docker Hub
       runs-on: ubuntu-latest
       needs: tests
