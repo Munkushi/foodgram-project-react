@@ -219,6 +219,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
                 "Минимальное время приготовления - 1 минута.")
         return cooking_time
 
+
 class SubscribeSerializer(serializers.ModelSerializer):
     """Serializer для подписки."""
     id = serializers.ReadOnlyField(source="author.id")
