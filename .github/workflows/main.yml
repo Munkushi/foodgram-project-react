@@ -43,7 +43,7 @@ jobs:
           uses: docker/build-push-action@v2 
           with:
             # file: backend/Dockerfile
-            context: ./backend
+            context: ../backend
             push: true
             tags: munkushi/foodgram-project
  
@@ -65,7 +65,7 @@ jobs:
         - name: Push to Docker Hub
           uses: docker/build-push-action@v2 
           with:
-            context: ./frontend
+            context: ../frontend
             push: true
             tags: munkushi/foodgram_frontend
   
