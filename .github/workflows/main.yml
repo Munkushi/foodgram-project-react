@@ -45,8 +45,7 @@ jobs:
             # file: backend/Dockerfile
             context: ../backend
             push: true
-            tags: munkushi/foodgram-project
-            tags: munkushi/foodgram_frontend
+            tags: munkushi/foodgram-project, munkushi/foodgram_frontend
             # не факт что то указываю
   
   deploy:
