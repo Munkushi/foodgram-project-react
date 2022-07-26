@@ -2,8 +2,9 @@ from api.pagination import CustomPagination
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from foodgram.models import (IngredientAmount, Ingredients, Recipe,
-                             ShoppingCart, Subscribe, Tag)
+from foodgram.models import (
+    IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe, Tag,
+)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -11,9 +12,10 @@ from rest_framework.response import Response
 
 from .filter import AuthorAndTagFilter, IngredientsFilter
 from .permissions import AdminOrReadOnly, AuthorOrReadOnly
-from .serializers import (IngredientsSerializer, RecipeGetSeriazlier,
-                          RecipePostSerializer, SubscribeSerializer,
-                          TagSerializer)
+from .serializers import (
+    IngredientsSerializer, RecipeGetSeriazlier, RecipePostSerializer,
+    SubscribeSerializer, TagSerializer,
+)
 from .utils import download_shooping_card
 
 User = get_user_model()
@@ -159,7 +161,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(
             {"errors": "Рецепт уже удален"}, status=status.HTTP_400_BAD_REQUEST
         )
-  
+
     @action(detail=False, methods=("get",),
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
