@@ -11,8 +11,8 @@ services:
     image: munkushi/foodgram-project
     restart: always
     volumes:
-      - static_value:/code/static/
-      - media_value:/code/media/
+      - static_value:/back/static/
+      - media_value:/back/media/
     depends_on:
       - db
     env_file:
