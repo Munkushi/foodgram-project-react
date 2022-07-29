@@ -16,4 +16,5 @@ isort
 black
 reportlab==3.6.8
 python-dotenv
-gunicorn 
+gunicorn
+psycopg2
