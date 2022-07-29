@@ -18,3 +18,4 @@ reportlab==3.6.8
 python-dotenv
 gunicorn
 psycopg2
+django-cors-headers 
