@@ -18,4 +18,4 @@ reportlab==3.6.8
 python-dotenv
 gunicorn
 psycopg2-binary==2.8.6
-django-cors-headers==2.2.19 
+django-cors-headers==3.10.0
