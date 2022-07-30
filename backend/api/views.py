@@ -26,7 +26,7 @@ class UserViewset(UserViewSet):
 
     pagination_class = CustomPagination
 
-    @action(detail=True, permission_classes=[IsAuthenticated])
+    @action(detail=True, permission_classes=(IsAuthenticated,))
     def subscribe(self, request, id):
         """Создание подписки."""
 
@@ -163,7 +163,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     @action(detail=False, methods=("get",),
-            permission_classes=[IsAuthenticated])
+            permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         final_list = {}
         ingredients = IngredientAmount.objects.filter(
