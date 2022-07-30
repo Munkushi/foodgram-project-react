@@ -63,6 +63,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram_.wsgi.application'
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 
 # sql -> postgres
 DATABASES = {
@@ -118,7 +125,7 @@ REST_FRAMEWORK = {
         "django_filters.rest_framework.DjangoFilterBackend",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.Allowy",
+        "rest_framework.permissions.AllowAny",
     ],
 }
 
