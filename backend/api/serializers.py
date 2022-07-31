@@ -108,7 +108,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 class RecipePostSerializer(serializers.ModelSerializer):
     """Serializer для модели Recipe. POST"""
 
-    tags = TagSerializer(many=True, read_only=True)
+    tag = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = IngredientAmountSerializer(
         many=True, read_only=True)
