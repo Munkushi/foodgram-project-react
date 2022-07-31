@@ -60,8 +60,7 @@ class Ingredients(models.Model):
         max_length=200,
         unique=True)
     measurement_unit = models.TextField(
-        verbose_name="Единица измерения",
-        unique=True)
+        verbose_name="Единица измерения",)
 
     class Meta:
         ordering = ("-id",)
@@ -148,14 +147,14 @@ class Subscribe(models.Model):
 
     user = models.ForeignKey(
         User,
-        related_name="follower",
         on_delete=models.CASCADE,
+        related_name="follower",
         verbose_name="Подписчик",
     )
     author = models.ForeignKey(
         User,
-        related_name="following",
         on_delete=models.CASCADE,
+        related_name="following",
         verbose_name="Автор",
     )
 
