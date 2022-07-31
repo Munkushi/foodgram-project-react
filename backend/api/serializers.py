@@ -108,7 +108,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 class RecipePostSerializer(serializers.ModelSerializer):
     """Serializer для модели Recipe. POST"""
 
-    tag = TagSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = IngredientAmountSerializer(
         many=True, read_only=True)
@@ -120,7 +120,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             "id",
-            "tag",
+            "tags",
             "author",
             "ingredients",
             "is_favorited",
@@ -161,10 +161,10 @@ class RecipePostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Создание рецепта."""
         image = validated_data.pop("image")
-        tags = validated_data.pop("tag")
+        tags = validated_data.pop("tags")
         ingredients = validated_data.pop("ingredients")
         recipe = Recipe.objects.create(image=image, **validated_data)
-        recipe.tag.set(tags)
+        recipe.tags.set(tags)
         self.create_ingredient(ingredients, recipe)
         return recipe
 
@@ -177,7 +177,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
             "cooking_time", instance.cooking_time
         )
         instance.tags.clear()
-        tags_data = self.initial_data.get("tag")
+        tags_data = self.initial_data.get("tags")
         instance.tags.set(tags_data)
         IngredientAmount.objects.filter(recipe=instance).all().delete()
         self.create_ingredients(validated_data.get("ingredients"), instance)
