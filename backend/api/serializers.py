@@ -120,7 +120,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             "id",
-            "tags",
+            "tag",
             "author",
             "ingredients",
             "is_favorited",
@@ -164,7 +164,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         tags = validated_data.pop("tag")
         ingredients = validated_data.pop("ingredients")
         recipe = Recipe.objects.create(image=image, **validated_data)
-        recipe.tags.set(tags)
+        recipe.tag.set(tags)
         self.create_ingredient(ingredients, recipe)
         return recipe
 
@@ -183,7 +183,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         self.create_ingredients(validated_data.get("ingredients"), instance)
         instance.save()
         return super().update(instance, validated_data)
-
+ 
     def validate(self, data):
         """Валидация рецепта."""
         ingredients = self.initial_data.get("ingredients")
