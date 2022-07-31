@@ -63,6 +63,8 @@ class Ingredients(models.Model):
         verbose_name="Единица измерения",)
 
     class Meta:
+        verbose_name = "Ингредиент"
+        verbose_name_plural = "Ингредиенты"
         ordering = ("-id",)
 
     def __str__(self) -> str:
@@ -109,7 +111,7 @@ class Recipe(models.Model):
         verbose_name_plural = "Рецепты"
 
     def __str__(self):
-        return self.description[:20]
+        return self.text[:20]
 
 
 class IngredientAmount(models.Model):
