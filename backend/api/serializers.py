@@ -183,7 +183,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         self.create_ingredients(validated_data.get("ingredients"), instance)
         instance.save()
         return super().update(instance, validated_data)
- 
+
     def validate(self, data):
         """Валидация рецепта."""
         ingredients = self.initial_data.get("ingredients")
