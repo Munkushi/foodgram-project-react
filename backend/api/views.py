@@ -104,7 +104,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """ViewSet для моедил Recipe."""
+    """ViewSet для модеил Recipe."""
 
     queryset = Recipe.objects.all()
     serializer_class = RecipePostSerializer
