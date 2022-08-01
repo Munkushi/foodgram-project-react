@@ -142,7 +142,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return user.is_authenticated and user.cart.filter(
             id=obj.id).exists()
 
-    def get_is_favorite(self, obj):
+    def get_is_favorited(self, obj):
         """Получение списка изранного."""
         user = self.context.get("request").user
         return user.is_authenticated and user.favorites.filter(
@@ -165,7 +165,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(image=image, **validated_data)
         tags_data = self.initial_data.get("tags")
         recipe.tags.set(tags_data)
-        self.create_ingredient(ingredients_data, recipe)
+        self.create_ingredients(ingredients_data, recipe)
         return recipe
 
     def update(self, validated_data, instance):
