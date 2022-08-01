@@ -148,7 +148,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return user.is_authenticated and user.favorites.filter(
             id=obj.id).exists()
 
-    def create_ingredient(self, ingredients, recipe):
+    def create_ingredients(self, ingredients, recipe):
         """Получение ингредиентов для рецепта."""
 
         for ingredient in ingredients:
