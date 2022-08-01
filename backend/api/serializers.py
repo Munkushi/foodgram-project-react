@@ -139,14 +139,16 @@ class RecipePostSerializer(serializers.ModelSerializer):
         """Получение информации о нахождении рецепта."""
 
         user = self.context.get("request").user
-        return user.is_authenticated and user.cart.filter(
-            id=obj.id).exists()
+        if user.is_anonymous:
+            return False
+        return Recipe.objects.filter(cart__user=user, id=obj.id).exists()
 
     def get_is_favorited(self, obj):
         """Получение списка изранного."""
         user = self.context.get("request").user
-        return user.is_authenticated and user.favorites.filter(
-            id=obj.id).exists()
+        if user.is_anonymous:
+            return False
+        return Recipe.objects.filter(favorites__user=user, id=obj.id).exists()
 
     def create_ingredients(self, ingredients, recipe):
         """Получение ингредиентов для рецепта."""
