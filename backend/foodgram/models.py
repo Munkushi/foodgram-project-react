@@ -14,6 +14,8 @@ LIGHT_GREEN = "#8fd8b9"
 LIGHT_ORANGE = "#faad62"
 YELLOW = "#deec59"
 PURPLE = "#7e4bf3"
+GREEN = "#49ac19"
+ORANGE = "#e09922"
 
 
 COLORS = [
@@ -25,6 +27,8 @@ COLORS = [
     (LIGHT_ORANGE, "Светло оранжевый"),
     (YELLOW, "Жёлтый"),
     (PURPLE, "Фиолетовый"),
+    (GREEN, "Зелёный"),
+    (ORANGE, "Оранжевый")
 ]
 
 
@@ -94,7 +98,7 @@ class Recipe(models.Model):
         related_name="recipes",
         verbose_name="Ингредиент",
     )
-    tag = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag,
         verbose_name="Тег")
     cooking_time = models.PositiveIntegerField(

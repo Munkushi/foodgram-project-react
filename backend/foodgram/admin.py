@@ -15,9 +15,9 @@ class RecipeAdmin(ModelAdmin):
     empty_value_display = "-пусто-"
     list_display = ("author", "name", "text", "cooking_time")
 
-    search_fields = ("name", "author", "tag")
+    search_fields = ("name", "author", "tags")
 
-    list_filter = ("tag",)
+    list_filter = ("tags",)
 
 
 @register(Ingredients)
