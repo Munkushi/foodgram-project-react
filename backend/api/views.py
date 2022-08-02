@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from foodgram.models import (
-    IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe, Tag, Favorite
+    Favorite, IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe,
+    Tag,
 )
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
