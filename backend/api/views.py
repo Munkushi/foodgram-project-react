@@ -118,12 +118,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=("get", "delete", "post"),
+        methods=("delete", "post"),
         permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk=None):
         """Добавить/убрать обьект в избранное или из него."""
-        if request.method == "GET":
+        if request.method == "POST":
             return self.add_obj(Subscribe, request.user, pk)
         elif request.method == "DELETE":
             return self.delete_obj(Subscribe, request.user, pk)
@@ -131,12 +131,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=("get", "delete", "post"),
+        methods=("delete", "post"),
         permission_classes=(IsAuthenticated,)
     )
     def shopping_cart(self, request, pk=None):
         """Добавление/удаление рецепта в/из корзину/ы"""
-        if request.method == "GET":
+        if request.method == "POST":
             return self.add_obj(ShoppingCart, request.user, pk)
         elif request.method == "DELETE":
             return self.delete_obj(ShoppingCart, request.user, pk)
