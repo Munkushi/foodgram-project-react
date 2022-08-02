@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from foodgram.models import (
-    IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe, Tag,
+    IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe, Tag, Favorite
 )
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -124,9 +124,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, pk=None):
         """Добавить/убрать обьект в избранное или из него."""
         if request.method == "POST":
-            return self.add_obj(Subscribe, request.user, pk)
+            return self.add_obj(Favorite, request.user, pk)
         elif request.method == "DELETE":
-            return self.delete_obj(Subscribe, request.user, pk)
+            return self.delete_obj(Favorite, request.user, pk)
         return None
 
     @action(
