@@ -111,7 +111,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = IngredientAmountSerializer(
-        many=True, read_only=True)
+        many=True, read_only=True, source="ingredientamount_set")
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
@@ -137,7 +137,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         """Получение информации о нахождении рецепта."""
-
         user = self.context.get("request").user
         if user.is_anonymous:
             return False
