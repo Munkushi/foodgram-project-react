@@ -174,7 +174,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop("ingredients")
         recipe.ingredients.clear()
         tags = validated_data.pop("tags")
-        self.save_ingredients(ingredients, recipe)
+        self.create_ingredients(ingredients, recipe)
         recipe.tags.set(tags)
         return super().update(recipe, validated_data)
 
