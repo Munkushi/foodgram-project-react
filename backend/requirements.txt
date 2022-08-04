@@ -19,3 +19,5 @@ python-dotenv
 gunicorn
 psycopg2-binary==2.8.6
 django-cors-headers==3.10.0
+sqlparse==0.4.2
+asgiref==3.2.10
