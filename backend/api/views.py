@@ -181,4 +181,4 @@ class RecipeViewSet(viewsets.ModelViewSet):
             else:
                 final_list[name]["amount"] += item[2]
 
-        download_shooping_card(final_list)
+        return download_shooping_card(final_list)

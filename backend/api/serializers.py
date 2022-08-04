@@ -169,21 +169,14 @@ class RecipePostSerializer(serializers.ModelSerializer):
         self.create_ingredients(ingredients_data, recipe)
         return recipe
 
-    def update(self, validated_data, instance):
+    def update(self, recipe, validated_data):
         """Обновление данных о рецепте."""
-        instance.image = validated_data.get("image", instance.image)
-        instance.name = validated_data.get("name", instance.name)
-        instance.text = validated_data.get("text", instance.text)
-        instance.cooking_time = validated_data.get(
-            "cooking_time", instance.cooking_time
-        )
-        instance.tags.clear()
-        tags_data = self.initial_data.get("tags")
-        instance.tags.set(tags_data)
-        IngredientAmount.objects.filter(recipe=instance).all().delete()
-        self.create_ingredients(validated_data.get("ingredients"), instance)
-        instance.save()
-        return super().update(instance, validated_data)
+        ingredients = validated_data.pop("ingredients")
+        recipe.ingredients.clear()
+        tags = validated_data.pop("tags")
+        self.save_ingredients(ingredients, recipe)
+        recipe.tags.set(tags)
+        return super().update(recipe, validated_data)
 
     def validate(self, data):
         """Валидация рецепта."""
