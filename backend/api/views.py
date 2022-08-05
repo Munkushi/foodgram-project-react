@@ -34,16 +34,19 @@ class UserViewset(UserViewSet):
         user = request.user
         author = get_object_or_404(User, id=id)
 
-        if (
-            user == author
-            or Subscribe.objects.filter(user=user, author=author).exists()
-        ):
-            return Response(
-                {"errors": "Вы не можете это сделать."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if user == author:
+            return Response({
+                "errors": "Вы не можете подписываться на самого себя"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        if Subscribe.objects.filter(user=user, author=author).exists():
+            return Response({
+                "errors": "Вы уже подписаны на данного пользователя"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         follow = Subscribe.objects.create(user=user, author=author)
-        serializer = SubscribeSerializer(follow, context={"request": request})
+        serializer = SubscribeSerializer(
+            follow, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
