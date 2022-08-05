@@ -240,12 +240,13 @@ class SubscribeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        user = self.context.get("request").user
-        if user.is_anonymous or (user == obj):
-            return False
-        return user.subscribe.filter(id=obj.id).exists()
+        """Получение подписок пользователя."""
+        return Subscribe.objects.filter(
+            user=obj.user, author=obj.author
+        ).exists()
 
     def get_recipes(self, obj):
+        """Получение рецептов пользователя."""
         request = self.context.get("request")
         limit = request.GET.get("recipes_limit")
         queryset = Recipe.objects.filter(author=obj.author)
@@ -254,4 +255,5 @@ class SubscribeSerializer(serializers.ModelSerializer):
         return RecipeGetSeriazlier(queryset, many=True).data
 
     def get_recipes_count(self, obj):
+        """Получение количества рецептов пользователя."""
         return Recipe.objects.filter(author=obj.author).count()
