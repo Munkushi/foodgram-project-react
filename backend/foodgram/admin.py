@@ -19,7 +19,7 @@ class RecipeAdmin(ModelAdmin):
 
     list_filter = ("tags",)
 
-    inlines = (IngredientInline)
+    inlines = (IngredientInline,)
 
 
 @register(Ingredients)
