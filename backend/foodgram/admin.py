@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, TabularInline, register
 
-from .models import IngredientAmount, Ingredients, Recipe, Tag
+from .models import IngredientAmount, Ingredients, Recipe, Subscribe, Tag
 
 
 class IngredientInline(TabularInline):
@@ -18,6 +18,8 @@ class RecipeAdmin(ModelAdmin):
     search_fields = ("name", "author", "tags")
 
     list_filter = ("tags",)
+
+    inlines = (IngredientInline)
 
 
 @register(Ingredients)
@@ -38,3 +40,6 @@ class TagAdmin(ModelAdmin):
     list_display = ("name", "slug", "color")
 
     filter_fields = ("name",)
+
+
+register(Subscribe)
