@@ -57,6 +57,7 @@ docker-compose up
 **IP для подключения.**
 
  51.250.26.158
+http://foodwithmunkushi.ddns.net/recipes
 
 **Используемые технологии(стэк):**
 
