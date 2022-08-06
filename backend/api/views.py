@@ -27,7 +27,11 @@ class UserViewset(UserViewSet):
 
     pagination_class = CustomPagination
 
-    @action(detail=True, permission_classes=[IsAuthenticated])
+    @action(
+        detail=True, 
+        permission_classes=[IsAuthenticated], 
+        methods=("post",)
+    )
     def subscribe(self, request, id=None):
         """Подписка на пользователей."""
 
