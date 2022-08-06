@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv(
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["foodwithmunkushi.ddns.net", "51.250.26.158", "localhost"]
+ALLOWED_HOSTS = ["foodwithmunkushi.ddns.net", "51.250.26.158", "localhost", "backend"]
 
 
 # Application definition
