@@ -2,19 +2,17 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+
 from foodgram.models import (
     IngredientAmount, Ingredients, Recipe, Subscribe, Tag,
 )
-from rest_framework import serializers
 
 User = get_user_model()
 
 
 class CustomUserSerializer(UserCreateSerializer):
     """Сериализатор для создания User."""
-
-    email = serializers.EmailField()
-    username = serializers.CharField()
 
     class Meta:
         model = User
@@ -47,7 +45,7 @@ class RecipeGetSeriazlier(serializers.ModelSerializer):
         read_only_fields = ("__all__",)
 
 
-class UserSerializer(UserSerializer):
+class ClassicUserSerializer(UserSerializer):
     """Подписки пользователя."""
 
     is_subscribed = serializers.SerializerMethodField(
@@ -217,17 +215,12 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
 class SubscribeSerializer(serializers.ModelSerializer):
     """Serializer для подписки."""
-    id = serializers.ReadOnlyField(source="author.id")
-    email = serializers.ReadOnlyField(source="author.email")
-    username = serializers.ReadOnlyField(source="author.username")
-    first_name = serializers.ReadOnlyField(source="author.first_name")
-    last_name = serializers.ReadOnlyField(source="author.last_name")
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Subscribe
+        model = User
         fields = (
             "id",
             "email",

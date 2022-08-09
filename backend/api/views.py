@@ -2,10 +2,6 @@ from api.pagination import CustomPagination
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from foodgram.models import (
-    Favorite, IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe,
-    Tag,
-)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -17,7 +13,12 @@ from .serializers import (
     IngredientsSerializer, RecipeGetSeriazlier, RecipePostSerializer,
     SubscribeSerializer, TagSerializer,
 )
+from api.exceptions import IsNotAuthorError
 from .utils import download_shooping_card
+from foodgram.models import (
+    Favorite, IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe,
+    Tag,
+)
 
 User = get_user_model()
 
@@ -27,49 +28,43 @@ class UserViewset(UserViewSet):
 
     pagination_class = CustomPagination
 
+
     @action(
         detail=True,
-        permission_classes=[IsAuthenticated],
-        methods=("post",)
+        permission_classes=(IsAuthenticated,),
+        methods=("post", "delete",),
     )
     def subscribe(self, request, id=None):
-        """Подписка на пользователей."""
-
-        user = request.user
+        """Подписка/Отписка."""
         author = get_object_or_404(User, id=id)
+        if request.method == "POST" or request.method == "DELETE":
+            if request.user == author:
+                raise Response({
+                    "errors": "Нельзя подписываться на себя."}, 
+                    status=status.HTTP_400_BAD_REQUEST) 
+        if request.method == "POST":
+            if Subscribe.objects.filter(user=request.user, author=author).exists():
+                return Response({
+                    "errors": "Вы уже подписаны на данного пользователя"
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            follow = Subscribe.objects.create(user=request.user, author=author)
+            serializer = SubscribeSerializer(
+                follow, context={"request": request}
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if user == author:
+        elif request.method == "DELETE":
+            follow = Subscribe.objects.filter(user=request.user, author=author)
+            if follow.exists():
+                follow.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+
             return Response({
-                "errors": "Вы не можете подписываться на самого себя"
-            }, status=status.HTTP_400_BAD_REQUEST)
-        if Subscribe.objects.filter(user=user, author=author).exists():
-            return Response({
-                "errors": "Вы уже подписаны на данного пользователя"
+                "errors": "Вы уже отписались"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        follow = Subscribe.objects.create(user=user, author=author)
-        serializer = SubscribeSerializer(
-            follow, context={"request": request}
-        )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @subscribe.mapping.delete
-    def del_subscribe(self, request, id=None):
-        """Отписка."""
-        user = request.user
-        author = get_object_or_404(User, id=id)
-        if user == author:
-            return Response({
-                "errors": "Вы не можете отписываться от самого себя"
-            }, status=status.HTTP_400_BAD_REQUEST)
-        follow = Subscribe.objects.filter(user=user, author=author)
-        if follow.exists():
-            follow.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response({
-            "errors": "Вы уже отписались"
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return None                
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
@@ -175,7 +170,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         final_list = {}
         ingredients = IngredientAmount.objects.filter(
             recipe__cart__user=request.user).values_list(
-            "ingredient__name", "ingredient__measurement_unit",
+            "ingredient__name", 
+            "ingredient__measurement_unit",
             "amount")
         for item in ingredients:
             name = item[0]
