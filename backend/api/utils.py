@@ -1,13 +1,8 @@
-from django.contrib.auth import get_user_model
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import status
-from rest_framework.response import Response
 
-User = get_user_model()
 
 def download_shooping_card(x):
     """Функция для скачивания shopping_card."""
@@ -28,12 +23,3 @@ def download_shooping_card(x):
     page.showPage()
     page.save()
     return response
-
-def check_author_and_user(request):
-    """Вынес проверку на автора для функций подписок."""
-    author = get_object_or_404(User, id=id)
-
-    if request.user == author:
-        return status==status.HTTP_400_BAD_REQUEST
-    
-    return status

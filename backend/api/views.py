@@ -13,7 +13,6 @@ from .serializers import (
     IngredientsSerializer, RecipeGetSeriazlier, RecipePostSerializer,
     SubscribeSerializer, TagSerializer,
 )
-from api.exceptions import IsNotAuthorError
 from .utils import download_shooping_card
 from foodgram.models import (
     Favorite, IngredientAmount, Ingredients, Recipe, ShoppingCart, Subscribe,
@@ -27,8 +26,6 @@ class UserViewset(UserViewSet):
     """Viewset для кастомной модели User."""
 
     pagination_class = CustomPagination
-
-
     @action(
         detail=True,
         permission_classes=(IsAuthenticated,),
@@ -40,14 +37,14 @@ class UserViewset(UserViewSet):
         if request.method == "POST" or request.method == "DELETE":
             if request.user == author:
                 raise Response({
-                    "errors": "Нельзя подписываться на себя."}, 
-                    status=status.HTTP_400_BAD_REQUEST) 
+                    "errors": "Нельзя подписываться на себя."},
+                    status=status.HTTP_400_BAD_REQUEST)
         if request.method == "POST":
             if Subscribe.objects.filter(user=request.user, author=author).exists():
                 return Response({
                     "errors": "Вы уже подписаны на данного пользователя"
                 }, status=status.HTTP_400_BAD_REQUEST)
-            
+
             follow = Subscribe.objects.create(user=request.user, author=author)
             serializer = SubscribeSerializer(
                 follow, context={"request": request}

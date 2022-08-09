@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import FilterSet, filters
-from foodgram.models import Recipe
 from rest_framework.filters import SearchFilter
+
+from foodgram.models import Recipe
 
 User = get_user_model()
 

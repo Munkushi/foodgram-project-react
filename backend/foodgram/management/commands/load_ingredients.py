@@ -1,6 +1,7 @@
 import csv
 
 from django.core.management.base import BaseCommand
+
 from foodgram.models import Ingredients
 
 ALREDY_LOADED_ERROR_MESSAGE = "Ингредиенты уже загружены."
