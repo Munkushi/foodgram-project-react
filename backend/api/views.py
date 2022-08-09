@@ -42,9 +42,9 @@ class UserViewset(UserViewSet):
                     status=status.HTTP_400_BAD_REQUEST)
         if request.method == "POST":
             if Subscribe.objects.filter(user=request.user,
-            author=author).exists():
+                                        author=author).exists():
                 return Response({
-                    "errors": "Вы уже подписаны на данного пользователя"}, 
+                    "errors": "Вы уже подписаны на данного пользователя"},
                     status=status.HTTP_400_BAD_REQUEST)
 
             follow = Subscribe.objects.create(user=request.user, author=author)
@@ -63,7 +63,7 @@ class UserViewset(UserViewSet):
                 "errors": "Вы уже отписались"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        return None   
+        return None
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
