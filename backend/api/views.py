@@ -26,6 +26,7 @@ class UserViewset(UserViewSet):
     """Viewset для кастомной модели User."""
 
     pagination_class = CustomPagination
+
     @action(
         detail=True,
         permission_classes=(IsAuthenticated,),
@@ -40,7 +41,8 @@ class UserViewset(UserViewSet):
                     "errors": "Нельзя подписываться на себя."},
                     status=status.HTTP_400_BAD_REQUEST)
         if request.method == "POST":
-            if Subscribe.objects.filter(user=request.user, author=author).exists():
+            if Subscribe.objects.filter(user=request.user, 
+            author=author).exists():
                 return Response({
                     "errors": "Вы уже подписаны на данного пользователя"
                 }, status=status.HTTP_400_BAD_REQUEST)
@@ -61,7 +63,7 @@ class UserViewset(UserViewSet):
                 "errors": "Вы уже отписались"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        return None                
+        return None        
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
@@ -167,7 +169,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         final_list = {}
         ingredients = IngredientAmount.objects.filter(
             recipe__cart__user=request.user).values_list(
-            "ingredient__name", 
+            "ingredient__name",
             "ingredient__measurement_unit",
             "amount")
         for item in ingredients:
