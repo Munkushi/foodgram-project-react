@@ -41,11 +41,11 @@ class UserViewset(UserViewSet):
                     "errors": "Нельзя подписываться на себя."},
                     status=status.HTTP_400_BAD_REQUEST)
         if request.method == "POST":
-            if Subscribe.objects.filter(user=request.user, 
+            if Subscribe.objects.filter(user=request.user,
             author=author).exists():
                 return Response({
-                    "errors": "Вы уже подписаны на данного пользователя"
-                }, status=status.HTTP_400_BAD_REQUEST)
+                    "errors": "Вы уже подписаны на данного пользователя"}, 
+                    status=status.HTTP_400_BAD_REQUEST)
 
             follow = Subscribe.objects.create(user=request.user, author=author)
             serializer = SubscribeSerializer(
@@ -63,7 +63,7 @@ class UserViewset(UserViewSet):
                 "errors": "Вы уже отписались"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        return None        
+        return None   
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
