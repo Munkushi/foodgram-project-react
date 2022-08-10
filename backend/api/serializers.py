@@ -107,7 +107,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
     """Serializer для модели Recipe. POST"""
 
     tags = TagSerializer(many=True, read_only=True)
-    author = UserSerializer(read_only=True)
+    author = ClassicUserSerializer(read_only=True)
     ingredients = IngredientAmountSerializer(
         many=True, read_only=True, source="ingredientamount_set")
     is_favorited = serializers.SerializerMethodField()
@@ -215,17 +215,12 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
 class SubscribeSerializer(serializers.ModelSerializer):
     """Serializer для подписки."""
-    id = serializers.ReadOnlyField(source="author.id")
-    email = serializers.ReadOnlyField(source="author.email")
-    username = serializers.ReadOnlyField(source="author.username")
-    first_name = serializers.ReadOnlyField(source="author.first_name")
-    last_name = serializers.ReadOnlyField(source="author.last_name")
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Subscribe
+        model = User
         fields = (
             "id",
             "email",
