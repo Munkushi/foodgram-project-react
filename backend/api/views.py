@@ -35,12 +35,11 @@ class UserViewset(UserViewSet):
     def subscribe(self, request, id=None):
         """Подписка/Отписка."""
         author = get_object_or_404(User, id=id)
-        if request.method == "POST" or request.method == "DELETE":
+        if request.method == "POST":
             if request.user == author:
                 raise Response({
                     "errors": "Нельзя подписываться на себя."},
                     status=status.HTTP_400_BAD_REQUEST)
-        if request.method == "POST":
             if Subscribe.objects.filter(user=request.user,
                                         author=author).exists():
                 return Response({
@@ -54,6 +53,10 @@ class UserViewset(UserViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         elif request.method == "DELETE":
+            if request.user == author:
+                raise Response({
+                    "errors": "Нельзя подписываться на себя."},
+                    status=status.HTTP_400_BAD_REQUEST)
             follow = Subscribe.objects.filter(user=request.user, author=author)
             if follow.exists():
                 follow.delete()
