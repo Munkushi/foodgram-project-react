@@ -223,7 +223,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source="author.username")
     first_name = serializers.ReadOnlyField(source="author.first_name")
     last_name = serializers.ReadOnlyField(source="author.last_name")
-    
+
     class Meta:
         model = Subscribe
         fields = (
