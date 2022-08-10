@@ -37,7 +37,7 @@ class UserViewset(UserViewSet):
         author = get_object_or_404(User, id=id)
         if request.method == "POST":
             if request.user == author:
-                raise Response({
+                return Response({
                     "errors": "Нельзя подписываться на себя."},
                     status=status.HTTP_400_BAD_REQUEST)
             if Subscribe.objects.filter(user=request.user,
@@ -54,7 +54,7 @@ class UserViewset(UserViewSet):
 
         elif request.method == "DELETE":
             if request.user == author:
-                raise Response({
+                return Response({
                     "errors": "Нельзя подписываться на себя."},
                     status=status.HTTP_400_BAD_REQUEST)
             follow = Subscribe.objects.filter(user=request.user, author=author)
