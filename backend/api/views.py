@@ -52,7 +52,7 @@ class UserViewset(UserViewSet):
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        elif request.method == "DELETE":
+        if request.method == "DELETE":
             if request.user == author:
                 return Response({
                     "errors": "Нельзя подписываться на себя."},
